@@ -2,28 +2,37 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"sync"
-	"time"
 )
 
-func worker(id int, wg *sync.WaitGroup) {
-	defer wg.Done() // tells WaitGroup this goroutine is finished
-
-	fmt.Println("Worker", id, "started")
-	time.Sleep(1 * time.Second)
-	fmt.Println("Worker", id, "finished")
-}
+var wg sync.WaitGroup // pointer
 
 func main() {
-
-	var wg sync.WaitGroup // WaitGroup variable
-
-	// Creating 3 goroutines
-	for i := 1; i <= 3; i++ {
-		wg.Add(1)         // Add 1 goroutine to wait for
-		go worker(i, &wg) // start goroutine
+	websiteList := []string{
+		"https://go.dev",
+		"https://google.com",
+		"https://fb.com",
+		"https://githube.com",
+		"https://instagram.com",
 	}
 
-	wg.Wait() // wait until all goroutines call Done()
-	fmt.Println("All workers completed.")
+	for _, web := range websiteList {
+		go getStatusCode(web)
+		wg.Add(1)
+	}
+
+	wg.Wait()
+}
+
+func getStatusCode(endpoint string) {
+
+	defer wg.Done()
+	res, err := http.Get(endpoint)
+
+	if err != nil {
+		fmt.Println("Oops in endpoint")
+	} else {
+		fmt.Printf("%d status code for  %s\n", res.StatusCode, endpoint)
+	}
 }
