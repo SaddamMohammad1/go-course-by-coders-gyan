@@ -22,6 +22,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	// Json marshal return bytes so use string method to convert bytes to json
 	fmt.Println("Now Person data is", string(jsonData)) // Now Person data is {"name":"Test","age":28,"is_adult":true}
 
 	// Decodeing (Unmarshalling)
